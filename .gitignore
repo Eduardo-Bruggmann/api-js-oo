@@ -5,5 +5,5 @@ logs
 .agents
 .claude
 .windsurf
-prisma
+prisma/migrations
 *.db
