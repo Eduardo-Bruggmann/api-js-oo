@@ -1,11 +1,12 @@
 import express from 'express'
-import UserRouter from './UserRouter.js'
+import AuthorRouter from './AuthorRoutes.js'
+import BookRouter from './BookRoutes.js'
 
 const router = express.Router()
 
-const routes = [new UserRouter()]
+const routes = [new AuthorRouter(), new BookRouter()]
 
-routes.forEach((route) => {
+routes.forEach(route => {
   router.use(route.path, route.getRouter())
 })
 

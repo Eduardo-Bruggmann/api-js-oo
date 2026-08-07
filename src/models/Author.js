@@ -1,6 +1,6 @@
 import Model from './Model.js'
 
-export default class User extends Model {
+export default class Author extends Model {
   constructor(data) {
     super(data)
   }
