@@ -32,7 +32,7 @@ export default class BookService extends Service {
 
     if (!book.author_id) throw new ValidationError('Author ID is required.')
 
-    if (this.authorRepository.findById(book.author_id) === null)
+    if (await this.authorRepository.findById(book.author_id) === null)
       throw new ValidationError('Author not found.')
 
     return true

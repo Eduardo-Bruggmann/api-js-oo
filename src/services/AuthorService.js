@@ -12,7 +12,7 @@ export default class AuthorService extends Service {
     if (Object.keys(author).length > 2)
       throw new ValidationError('Too many fields in the payload.')
 
-    if (Object.keys(author).some(key => !['name', 'nacionality'].includes(key)))
+    if (Object.keys(author).some(key => !['name', 'nationality'].includes(key)))
       throw new ValidationError('Invalid field in the payload.')
 
     if (!author.name) throw new ValidationError('Name is required.')
@@ -22,12 +22,12 @@ export default class AuthorService extends Service {
         'Name must be less than or equal to 100 characters.',
       )
 
-    if (!author.nacionality)
-      throw new ValidationError('Nacionality is required.')
+    if (!author.nationality)
+      throw new ValidationError('Nationality is required.')
 
-    if (author.nacionality.length > 50)
+    if (author.nationality.length > 50)
       throw new ValidationError(
-        'Nacionality must be less than or equal to 50 characters.',
+        'Nationality must be less than or equal to 50 characters.',
       )
 
     return true

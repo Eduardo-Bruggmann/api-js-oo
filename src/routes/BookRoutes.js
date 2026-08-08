@@ -1,7 +1,7 @@
 import { prisma } from '../../database/prisma.js'
 import BookController from '../controllers/BookController.js'
 import BookRepository from '../repositories/BookRepository.js'
-import BookRepository from '../repositories/AuthorRepository.js'
+import AuthorRepository from '../repositories/AuthorRepository.js'
 import BookService from '../services/BookService.js'
 import BaseRouter from './BaseRouter.js'
 
