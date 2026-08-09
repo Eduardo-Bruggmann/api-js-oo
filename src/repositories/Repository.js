@@ -24,8 +24,29 @@ export default class Repository {
     return model
   }
 
-  findAll(options = {}) {
-    return this.model.findMany(options)
+  async findAll(query = {}) {
+    const { page, limit, ...filters } = query
+    const currentPage = this.parsePositiveInteger(page, 1)
+    const perPage = this.parsePositiveInteger(limit, 10, 100)
+    const where = this.buildWhere(filters)
+    const [data, total] = await Promise.all([
+      this.model.findMany({
+        where,
+        skip: (currentPage - 1) * perPage,
+        take: perPage,
+      }),
+      this.model.count({ where }),
+    ])
+
+    return {
+      data,
+      meta: {
+        page: currentPage,
+        limit: perPage,
+        total,
+        totalPages: Math.ceil(total / perPage),
+      },
+    }
   }
 
   findById(id) {
@@ -54,5 +75,22 @@ export default class Repository {
   parseId(id) {
     const parsedId = Number(id)
     return Number.isNaN(parsedId) ? id : parsedId
+  }
+
+  parsePositiveInteger(value, defaultValue, maxValue = Infinity) {
+    const parsedValue = Number(value)
+
+    if (!Number.isInteger(parsedValue) || parsedValue <= 0) return defaultValue
+
+    return Math.min(parsedValue, maxValue)
+  }
+
+  buildWhere(filters = {}) {
+    return Object.entries(filters).reduce((where, [key, value]) => {
+      if (value === undefined || value === '') return where
+
+      where[key] = this.parseId(value)
+      return where
+    }, {})
   }
 }

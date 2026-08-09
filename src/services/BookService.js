@@ -7,7 +7,7 @@ export default class BookService extends Service {
     this.authorRepository = authorRepository
   }
 
-  validate(book) {
+  async validate(book) {
     if (!book) throw new ValidationError('Payload is required.')
 
     if (Object.keys(book).length > 3)
@@ -32,7 +32,7 @@ export default class BookService extends Service {
 
     if (!book.author_id) throw new ValidationError('Author ID is required.')
 
-    if (await this.authorRepository.findById(book.author_id) === null)
+    if ((await this.authorRepository.findById(book.author_id)) === null)
       throw new ValidationError('Author not found.')
 
     return true
