@@ -1,11 +1,20 @@
 import Middleware from './Middleware.js'
+import { Prisma } from '../../generated/prisma/client.ts'
 
 export default class ErrorMiddleware extends Middleware {
   handle(error, req, res, next) {
     const prismaError = this.mapPrismaError(error)
-    const statusCode = prismaError.status || error.status || 500
+
+    if (prismaError)
+      return res.status(prismaError.status).json({
+        message: prismaError.message,
+      })
+
+    const statusCode = error.status || 500
     const message =
-      prismaError.message || error.message || 'Internal server error.'
+      statusCode >= 500
+        ? 'Internal server error.'
+        : error.message || 'Internal server error.'
 
     return res.status(statusCode).json({
       message,
@@ -13,6 +22,8 @@ export default class ErrorMiddleware extends Middleware {
   }
 
   mapPrismaError(error) {
+    if (!this.isPrismaError(error)) return null
+
     const errors = {
       P2002: {
         status: 409,
@@ -28,6 +39,33 @@ export default class ErrorMiddleware extends Middleware {
       },
     }
 
-    return errors[error.code] || {}
+    return (
+      errors[error.code] || {
+        status: 500,
+        message: 'Internal server error.',
+      }
+    )
+  }
+
+  isPrismaError(error) {
+    if (!error) return false
+
+    const prismaErrors = [
+      Prisma.PrismaClientKnownRequestError,
+      Prisma.PrismaClientUnknownRequestError,
+      Prisma.PrismaClientRustPanicError,
+      Prisma.PrismaClientInitializationError,
+      Prisma.PrismaClientValidationError,
+    ]
+
+    if (prismaErrors.some(PrismaError => error instanceof PrismaError))
+      return true
+
+    return (
+      typeof error.name === 'string' &&
+      error.name.startsWith('PrismaClient') &&
+      (typeof error.code === 'string' ||
+        typeof error.clientVersion === 'string')
+    )
   }
 }
