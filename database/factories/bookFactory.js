@@ -1,0 +1,52 @@
+const titles = [
+  'Dom Casmurro',
+  'Memorias Postumas de Bras Cubas',
+  'A Hora da Estrela',
+  'Perto do Coracao Selvagem',
+  'Capitaes da Areia',
+  'Gabriela, Cravo e Canela',
+  'Romanceiro da Inconfidencia',
+  'Ou Isto ou Aquilo',
+  'Vidas Secas',
+  'Sao Bernardo',
+  'Alguma Poesia',
+  'Sentimento do Mundo',
+  'Ciranda de Pedra',
+  'As Meninas',
+  'Grande Sertao: Veredas',
+  'Sagarana',
+  'O Quinze',
+  'Memorial de Maria Moura',
+  'Macunaima',
+  'Amar, Verbo Intransitivo',
+  'Orgulho e Preconceito',
+  'Razao e Sensibilidade',
+  '1984',
+  'A Revolucao dos Bichos',
+  'Mrs Dalloway',
+  'Ao Farol',
+  'Cem Anos de Solidao',
+  'O Amor nos Tempos do Colera',
+  'O Jogo da Amarelinha',
+  'Bestiario',
+  'A Casa dos Espiritos',
+  'Paula',
+  'Crime e Castigo',
+  'Os Irmaos Karamazov',
+  'Guerra e Paz',
+  'Anna Karenina',
+  'Kafka a Beira-Mar',
+  'Norwegian Wood',
+  'Amada',
+  'O Olho Mais Azul',
+]
+
+function makeBooks(authors) {
+  return titles.map((title, index) => ({
+    title,
+    publication_year: 1880 + index * 3,
+    author_id: authors[index % authors.length].id,
+  }))
+}
+
+export { makeBooks }
