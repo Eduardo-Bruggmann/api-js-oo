@@ -1,20 +1,7 @@
-import express from 'express'
-import cors from 'cors'
-import router from './src/routes/routes.js'
-import * as middlewares from './src/middlewares/middlewares.js'
+import app from './src/app.js'
 
-const { errorMiddleware } = middlewares
-
-const PORT = 5000
-const app = express()
-
-app.use(express.json())
-app.use(cors())
-app.use(router)
-app.use(errorMiddleware)
+const PORT = process.env.PORT || 5000
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`)
+  console.log(`App is running on http://localhost:${PORT}`)
 })
-
-app.get('/', (req, res) => res.json({ message: 'Hello, World!' }))
