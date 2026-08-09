@@ -5,7 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "prisma:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "setup": "npm install && npx prisma generate && npx prisma db push",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -16,10 +21,12 @@
     "@prisma/client": "^7.9.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "nodemon": "^3.1.14"
+    "express": "^5.2.1"
   },
   "devDependencies": {
-    "prisma": "^7.9.1"
+    "prisma": "^7.9.1",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.1.4",
+    "vitest": "^3.2.4"
   }
 }

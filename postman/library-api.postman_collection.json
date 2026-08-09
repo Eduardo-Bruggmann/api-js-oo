@@ -1,0 +1,276 @@
+{
+  "info": {
+    "_postman_id": "d7c89f6e-f54b-44f7-82cc-6cb57012f1c2",
+    "name": "API REST de Biblioteca",
+    "description": "Collection para testar a API REST de biblioteca. Inclui rotas de health, autores e livros, com exemplos de payload e variáveis para reaproveitar IDs entre requisições.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "author_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "book_id",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "description": "Rota para verificar se a API está respondendo.",
+      "item": [
+        {
+          "name": "Verificar API",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            },
+            "description": "Verifica se o servidor está online e respondendo."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Autores",
+      "description": "Rotas para cadastrar, listar, buscar, atualizar e remover autores.",
+      "item": [
+        {
+          "name": "Listar autores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/authors?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["authors"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Página atual da listagem."
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Quantidade de registros por página."
+                }
+              ]
+            },
+            "description": "Lista autores com paginação. A resposta contém `data` e `meta`."
+          }
+        },
+        {
+          "name": "Criar autor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) {",
+                  "  pm.collectionVariables.set('author_id', json.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Machado de Assis\",\n  \"nationality\": \"Brasileira\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/authors",
+              "host": ["{{base_url}}"],
+              "path": ["authors"]
+            },
+            "description": "Cria um novo autor. Após uma resposta bem-sucedida, salva o `id` retornado na variável `author_id`."
+          }
+        },
+        {
+          "name": "Buscar autor por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/authors/{{author_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["authors", "{{author_id}}"]
+            },
+            "description": "Busca um autor pelo ID salvo na variável `author_id`."
+          }
+        },
+        {
+          "name": "Atualizar autor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Machado de Assis\",\n  \"nationality\": \"Brasileiro\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/authors/{{author_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["authors", "{{author_id}}"]
+            },
+            "description": "Atualiza os dados do autor identificado por `author_id`."
+          }
+        },
+        {
+          "name": "Remover autor",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/authors/{{author_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["authors", "{{author_id}}"]
+            },
+            "description": "Remove o autor identificado por `author_id`. Como a relação usa cascade, os livros vinculados também são removidos."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Livros",
+      "description": "Rotas para cadastrar, listar, buscar, atualizar e remover livros.",
+      "item": [
+        {
+          "name": "Listar livros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/books?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["books"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Página atual da listagem."
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Quantidade de registros por página."
+                }
+              ]
+            },
+            "description": "Lista livros com paginação. A resposta contém `data` e `meta`."
+          }
+        },
+        {
+          "name": "Criar livro",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) {",
+                  "  pm.collectionVariables.set('book_id', json.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Dom Casmurro\",\n  \"publication_year\": 1899,\n  \"author_id\": {{author_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/books",
+              "host": ["{{base_url}}"],
+              "path": ["books"]
+            },
+            "description": "Cria um novo livro vinculado ao autor salvo em `author_id`. Após uma resposta bem-sucedida, salva o `id` retornado na variável `book_id`."
+          }
+        },
+        {
+          "name": "Buscar livro por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/books/{{book_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["books", "{{book_id}}"]
+            },
+            "description": "Busca um livro pelo ID salvo na variável `book_id`."
+          }
+        },
+        {
+          "name": "Atualizar livro",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Dom Casmurro - Edição Comentada\",\n  \"publication_year\": 1900,\n  \"author_id\": {{author_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/books/{{book_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["books", "{{book_id}}"]
+            },
+            "description": "Atualiza os dados do livro identificado por `book_id`."
+          }
+        },
+        {
+          "name": "Remover livro",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/books/{{book_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["books", "{{book_id}}"]
+            },
+            "description": "Remove o livro identificado por `book_id`."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -17,6 +17,8 @@ O SQLite foi escolhido por ser leve, simples de configurar e prático para desen
 - CORS
 - Dotenv
 - Nodemon
+- Vitest
+- Supertest
 
 ## Estrutura de pastas
 
@@ -24,6 +26,8 @@ O SQLite foi escolhido por ser leve, simples de configurar e prático para desen
 .
 +-- database/
 |   +-- prisma.js
++-- postman/
+|   +-- library-api.postman_collection.json
 +-- prisma/
 |   +-- schema.prisma
 +-- src/
@@ -34,6 +38,8 @@ O SQLite foi escolhido por ser leve, simples de configurar e prático para desen
 |   +-- repositories/
 |   +-- routes/
 |   +-- services/
+|   +-- app.js
++-- tests/
 +-- index.js
 +-- package.json
 +-- prisma.config.ts
@@ -42,6 +48,8 @@ O SQLite foi escolhido por ser leve, simples de configurar e prático para desen
 
 ## Arquitetura
 
+- `src/app.js`: configura o Express, middlewares, rota raiz e rotas da API.
+- `index.js`: inicia o servidor HTTP.
 - `routes`: define os caminhos HTTP e conecta cada rota ao controller correspondente.
 - `controllers`: recebe as requisições, chama os services e retorna as respostas HTTP.
 - `services`: concentra regras de negócio e validações.
@@ -50,6 +58,8 @@ O SQLite foi escolhido por ser leve, simples de configurar e prático para desen
 - `middlewares`: contém middlewares compartilhados, como tratamento de erros.
 - `database`: configura a instância do Prisma Client.
 - `prisma`: contém o schema do banco.
+- `tests`: contém testes automatizados da aplicação.
+- `postman`: contém a collection do Postman para testar a API manualmente.
 
 ## Modelos
 
@@ -62,6 +72,7 @@ Campos:
 - `id`
 - `name`
 - `nationality`
+- `books`
 
 ### Book
 
@@ -73,15 +84,22 @@ Campos:
 - `title`
 - `publication_year`
 - `author_id`
+- `author`
 
 Cada livro pertence a um autor, e a relação usa `onDelete: Cascade`, ou seja, ao remover um autor, seus livros relacionados também são removidos.
 
 ## Endpoints
 
+### Geral
+
+```http
+GET /
+```
+
 ### Autores
 
 ```http
-GET /authors
+GET /authors?page=1&limit=10
 GET /authors/:id
 POST /authors
 PUT /authors/:id
@@ -100,7 +118,7 @@ Exemplo de criação de autor:
 ### Livros
 
 ```http
-GET /books
+GET /books?page=1&limit=10
 GET /books/:id
 POST /books
 PUT /books/:id
@@ -114,6 +132,30 @@ Exemplo de criação de livro:
   "title": "Dom Casmurro",
   "publication_year": 1899,
   "author_id": 1
+}
+```
+
+## Paginação
+
+As rotas de listagem aceitam os parâmetros `page` e `limit`.
+
+Exemplo:
+
+```http
+GET /authors?page=1&limit=10
+```
+
+Formato da resposta:
+
+```json
+{
+  "data": [],
+  "meta": {
+    "page": 1,
+    "limit": 10,
+    "total": 0,
+    "totalPages": 0
+  }
 }
 ```
 
@@ -177,8 +219,86 @@ Por padrão, a API sobe em:
 http://localhost:5000
 ```
 
+## Scripts disponíveis
+
+```bash
+npm run dev
+npm start
+npm run prisma:generate
+npm run db:push
+npm run setup
+npm test
+npm run test:watch
+```
+
+## Testes automatizados
+
+O projeto usa Vitest e Supertest para validar partes importantes da aplicação.
+
+Para executar os testes:
+
+```bash
+npm test
+```
+
+Atualmente há testes para:
+
+- rota raiz da API;
+- paginação no repository;
+- tratamento de erros da aplicação e do Prisma.
+
+## Collection do Postman
+
+A collection está disponível em:
+
+```text
+postman/library-api.postman_collection.json
+```
+
+Para usar:
+
+1. Abra o Postman.
+2. Clique em `Import`.
+3. Selecione o arquivo `postman/library-api.postman_collection.json`.
+4. Inicie a API com `npm run dev` ou `npm start`.
+5. Execute as requisições da collection.
+
+A collection possui a variável `base_url` configurada como:
+
+```text
+http://localhost:5000
+```
+
+Ela também usa as variáveis `author_id` e `book_id`. Ao criar um autor ou livro, os scripts da própria collection salvam automaticamente os IDs retornados para facilitar os testes das rotas de busca, atualização e remoção.
+
+Fluxo recomendado para testar manualmente:
+
+1. `Verificar API`
+2. `Criar autor`
+3. `Listar autores`
+4. `Buscar autor por ID`
+5. `Atualizar autor`
+6. `Criar livro`
+7. `Listar livros`
+8. `Buscar livro por ID`
+9. `Atualizar livro`
+10. `Remover livro`
+11. `Remover autor`
+
+## Tratamento de erros
+
+A API possui um middleware centralizado de erros. Além dos erros próprios da aplicação, alguns erros conhecidos do Prisma são convertidos para respostas HTTP mais claras:
+
+- `P2002`: conflito por valor duplicado.
+- `P2003`: erro de relacionamento ou chave estrangeira.
+- `P2025`: recurso não encontrado.
+
 ## Observações de implementação
 
 O projeto usa classes base abstratas para reduzir repetição em controllers, services, repositories e rotas. Essa abordagem deixa clara a intenção de reaproveitar comportamento comum entre recursos da API.
 
-Também há um middleware centralizado de erros, o que ajuda a padronizar respostas quando uma validação ou exceção acontece.
+O `src/app.js` concentra a configuração do Express, enquanto o `index.js` apenas inicia o servidor. Essa separação facilita os testes automatizados, já que o app pode ser importado sem abrir uma porta HTTP.
+
+## Licença
+
+ISC
