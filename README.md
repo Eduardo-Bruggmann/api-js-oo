@@ -219,7 +219,71 @@ Por padrão, a API sobe em:
 http://localhost:5000
 ```
 
+## Configuração do frontend
+
+O frontend fica na pasta `frontend` e usa Vite com Tailwind CSS.
+
+### 1. Entre na pasta do frontend
+
+```bash
+cd frontend
+```
+
+### 2. Instale as dependências
+
+```bash
+npm install
+```
+
+### 3. Configure a URL da API
+
+Crie uma cópia do arquivo `.env.sample` com o nome `.env`.
+
+```bash
+cp .env.sample .env
+```
+
+No Windows PowerShell:
+
+```powershell
+Copy-Item .env.sample .env
+```
+
+Por padrão, o frontend usa:
+
+```env
+VITE_API_URL="http://localhost:5000"
+```
+
+### 4. Suba o servidor de desenvolvimento
+
+```bash
+npm run dev
+```
+
+O Vite exibirá no terminal a URL local do frontend, normalmente:
+
+```text
+http://localhost:5173
+```
+
+### 5. Compile o frontend
+
+```bash
+npm run build
+```
+
+Os arquivos compilados serão gerados na pasta `frontend/dist`.
+
+### 6. Visualize a versão compilada
+
+```bash
+npm run preview
+```
+
 ## Scripts disponíveis
+
+### Backend
 
 ```bash
 npm run dev
@@ -229,6 +293,14 @@ npm run db:push
 npm run setup
 npm test
 npm run test:watch
+```
+
+### Frontend
+
+```bash
+npm run dev
+npm run build
+npm run preview
 ```
 
 ## Testes automatizados
