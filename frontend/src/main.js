@@ -1,7 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('Hello, World!')
+import { router, setupNavigation } from './router.js'
 
-  document.getElementById('app').innerHTML = `
-    <h1 class="text-9xl">Hello, World!</h1>
-  `
-})
+setupNavigation()
+router()
